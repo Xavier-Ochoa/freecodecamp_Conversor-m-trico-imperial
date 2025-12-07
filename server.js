@@ -12,26 +12,29 @@ const runner            = require('./test-runner');
 
 let app = express();
 
+// Servir archivos estáticos desde /public
 app.use('/public', express.static(process.cwd() + '/public'));
 
-app.use(cors({origin: '*'})); //For FCC testing purposes only
+// Habilitar CORS para testing FCC
+app.use(cors({origin: '*'}));
 
+// Middleware para parsear JSON y urlencoded
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Index page (static HTML)
+// Página principal
 app.route('/')
   .get(function (req, res) {
     res.sendFile(process.cwd() + '/views/index.html');
   });
 
-//For FCC testing purposes
+// Rutas de prueba de FreeCodeCamp
 fccTestingRoutes(app);
 
-//Routing for API 
-apiRoutes(app);  
-    
-//404 Not Found Middleware
+// Rutas de la API
+apiRoutes(app);
+
+// 404 Not Found Middleware
 app.use(function(req, res, next) {
   res.status(404)
     .type('text')
@@ -40,7 +43,7 @@ app.use(function(req, res, next) {
 
 const port = process.env.PORT || 3000;
 
-//Start our server and tests!
+// Iniciar servidor y tests si está en modo test
 app.listen(port, function () {
   console.log("Listening on port " + port);
   if(process.env.NODE_ENV==='test') {
@@ -49,11 +52,11 @@ app.listen(port, function () {
       try {
         runner.run();
       } catch(e) {
-          console.log('Tests are not valid:');
-          console.error(e);
+        console.log('Tests are not valid:');
+        console.error(e);
       }
     }, 1500);
   }
 });
 
-module.exports = app; //for testing
+module.exports = app; // para testing
